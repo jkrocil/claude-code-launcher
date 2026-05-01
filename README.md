@@ -47,7 +47,6 @@ Paste the following into your agent:
 ```sh
 Add the following function to my ~/.zshrc (if on macOS) or ~/.bashrc (if on Linux):
 
-
 cl() {
   # Use first arg as session name, or fall back to current directory
   local name
@@ -107,9 +106,80 @@ Then open a new terminal window to start using `cl`.
 
 ## Known limitations
 
-`cl` works best with a workflow where sessions are started fresh rather than resumed or continued. Auto-coloring is skipped for flags that conflict with the `/color` prompt (`--resume`, `--continue`, `--from-pr`, `--print`, `--help`, `--version`), and resumed sessions don't appear in the color inventory, so a new session could end up with the same color as an existing one that was resumed or continued.
+The minimal `cl` above works best with a workflow where sessions are started fresh rather than resumed or continued. Auto-coloring is skipped for flags that conflict with the `/color` prompt (`--resume`, `--continue`, `--from-pr`, `--print`, `--help`, `--version`), and resumed sessions don't appear in the color inventory, so a new session could end up with the same color as an existing one that was resumed or continued.
 
 That said, sessions originally started with `cl` will still have their name and color upon resuming or continuing.
+
+## Experimental: for workflows with resumed and continued sessions
+
+The default version detects used colors by scanning process arguments (`ps aux | grep '/color'`). This is simple and portable, but it misses sessions that were resumed or continued since they don't have `/color` in their process args.
+
+The version below reads Claude Code's internal session files instead, which track color for all active sessions regardless of how they were started. This solves the color collision issue with resumed sessions. It is read-only and completely safe to use, but makes more assumptions about Claude Code internals (`~/.claude/sessions/` and `agentColor` in JSONL transcripts) that could change between versions.
+
+Unless resuming or continuing sessions is an important part of your workflow, stick with the minimal version above.
+
+To install the experimental version instead, paste the following into your agent:
+
+```sh
+Add the following function to my ~/.zshrc (if on macOS) or ~/.bashrc (if on Linux):
+
+cl() {
+  local name
+  if [[ -z "$1" || "$1" == -* ]]; then
+    name=$(basename "$PWD")
+  else
+    name="$1"
+    shift
+  fi
+
+  local skip_color=0
+  for arg in "$@"; do
+    case "$arg" in
+      -p|--print|-r|--resume|-c|--continue|--from-pr|-h|--help|-v|--version)
+        skip_color=1
+        break
+        ;;
+    esac
+  done
+
+  if (( skip_color )); then
+    claude --name "$name" "$@"
+    return
+  fi
+
+  local all=(red green blue yellow purple orange pink cyan)
+
+  # Read colors from all active Claude sessions via internal session files
+  local used=()
+  for f in ~/.claude/sessions/*.json; do
+    [ -f "$f" ] || continue
+    local pid=$(grep -o '"pid":[0-9]*' "$f" | cut -d: -f2)
+    kill -0 "$pid" 2>/dev/null || continue
+    local sid=$(grep -o '"sessionId":"[^"]*"' "$f" | cut -d'"' -f4)
+    local cwd=$(grep -o '"cwd":"[^"]*"' "$f" | cut -d'"' -f4)
+    local project_dir=$(echo "$cwd" | tr '/' '-')
+    local color=$(grep -o '"agentColor":"[a-z]*"' ~/.claude/projects/"$project_dir"/"$sid".jsonl 2>/dev/null | tail -1 | cut -d'"' -f4)
+    [[ -z "$color" || "$color" == "default" ]] && color="cyan"
+    used+=("$color")
+  done
+
+  local avail=()
+  for c in "${all[@]}"; do
+    local taken=0
+    for u in "${used[@]}"; do [[ "$c" == "$u" ]] && taken=1 && break; done
+    (( taken == 0 )) && avail+=("$c")
+  done
+  [[ ${#avail[@]} -eq 0 ]] && avail=("${all[@]}")
+
+  local n=${#avail[@]}
+  local idx=$((RANDOM % n))
+  [[ -n "$ZSH_VERSION" ]] && idx=$((idx + 1))
+
+  claude --name "$name" "$@" "/color ${avail[$idx]}"
+}
+```
+
+Then open a new terminal window to start using `cl`.
 
 ## Requirements
 
