@@ -184,7 +184,7 @@ Then open a new terminal window to start using `cl`.
 ## Requirements
 
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and available as `claude`
-- Zsh or Bash 4+
+- Zsh or Bash
 
 ## License
 
