@@ -42,9 +42,12 @@ A single shell function that wraps `claude` as `cl`. Just type `cl` instead of `
 
 ## Installation
 
-Copy-paste the code below into your `~/.zshrc` (macOS) or `~/.bashrc` (Linux), or just tell your agent to add it for you.
+Paste the following into your agent:
 
-```sh
+```
+Add the following function to my ~/.zshrc (if on macOS) or ~/.bashrc (if on Linux):
+
+
 cl() {
   # Use first arg as session name, or fall back to current directory
   local name
@@ -92,12 +95,7 @@ cl() {
 }
 ```
 
-Then reload your shell:
-
-```sh
-source ~/.zshrc   # macOS
-source ~/.bashrc  # Linux
-```
+Then open a new terminal window to start using `cl`.
 
 ## How It Works
 
