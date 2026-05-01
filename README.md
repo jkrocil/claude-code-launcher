@@ -32,12 +32,6 @@ A single shell function that wraps `claude` as `cl`. Just type `cl` instead of `
 
 # Terminal 3 - custom name, gets another unused color
 ~/projects/api $ cl "debug-auth"
-
-# Continue the most recent session in this directory
-~/projects/api $ cl --continue
-
-# Resume a previous session by name
-~/projects/api $ cl myproject --resume
 ```
 
 ## Installation
