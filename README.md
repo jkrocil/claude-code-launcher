@@ -105,11 +105,11 @@ Then open a new terminal window to start using `cl`.
 4. **Random pick** - selects a random color from the available pool (or from all colors if every color is taken).
 5. **Launch** - starts `claude` with `--name`, forwards any extra arguments, and sends the `/color` command.
 
-## Limitations
+## Known limitations
 
-Auto-coloring is skipped for session modes that conflict with the `/color` prompt: `--resume`, `--continue`, `--from-pr`, `--print`, `--help`, and `--version`. These are passed through to `claude` as-is with only `--name` applied. Everything else gets the full auto-naming and auto-coloring treatment.
+`cl` works best with a workflow where sessions are started fresh rather than resumed or continued. Auto-coloring is skipped for flags that conflict with the `/color` prompt (`--resume`, `--continue`, `--from-pr`, `--print`, `--help`, `--version`), and resumed sessions don't appear in the color inventory, so a new session could end up with the same color as an existing one that was resumed or continued.
 
-Note: sessions originally started with `cl` will already have a name and color set, so resuming or continuing them works as expected.
+That said, sessions originally started with `cl` will still have their name and color upon resuming or continuing.
 
 ## Requirements
 
