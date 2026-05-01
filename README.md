@@ -44,7 +44,7 @@ A single shell function that wraps `claude` as `cl`. Just type `cl` instead of `
 
 Paste the following into your agent:
 
-```
+```sh
 Add the following function to my ~/.zshrc (if on macOS) or ~/.bashrc (if on Linux):
 
 
