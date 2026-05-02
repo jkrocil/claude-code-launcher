@@ -104,15 +104,15 @@ The minimal `cl` above works best with a workflow where sessions are started fre
 
 That said, sessions originally started with `cl` will still have their name and color upon resuming or continuing.
 
-## Experimental: for workflows with resumed and continued sessions
+## Alternative: for workflows with resumed and continued sessions
 
 The default version detects used colors by scanning process arguments (`ps aux | grep '/color'`). This is simple and portable, but it misses sessions that were resumed or continued since they don't have `/color` in their process args.
 
-The version below reads Claude Code's internal session files instead, which track color for all active sessions regardless of how they were started. This solves the color collision issue with resumed sessions. It is read-only and completely safe to use, but makes more assumptions about Claude Code internals (`~/.claude/sessions/` and `agentColor` in JSONL transcripts) that could change between versions.
+The alternative version below reads Claude Code's internal session files instead, which track color for all active sessions regardless of how they were started. This solves the color collision issue with resumed sessions. It is tested and working, but depends on Claude Code internals (`~/.claude/sessions/` and `agentColor` in JSONL transcripts) that may change in newer versions and break color detection.
 
 Unless resuming or continuing sessions is an important part of your workflow, stick with the minimal version above.
 
-To install the experimental version instead, paste the following into your agent:
+To install the alternative version instead, paste the following into your agent:
 
 ```sh
 Add the following function to my ~/.zshrc (if on macOS) or ~/.bashrc (if on Linux):
