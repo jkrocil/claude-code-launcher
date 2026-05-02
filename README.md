@@ -19,7 +19,7 @@ Claude Code sessions launch with no name and no color by default. Open three ter
 A single shell function that wraps `claude` as `cl`. Just type `cl` instead of `claude`. That's it. You get:
 
 1. **Named sessions** - automatically names each session after the current directory, or accepts a custom name as the first argument.
-2. **Automatic color assignment** - scans running Claude processes, finds which colors are already taken, and picks an unused one. When all 8 colors are in use, it wraps around randomly.
+2. **Automatic color assignment** - scans running Claude processes, finds which colors are already taken, and picks an unused one. When all 8 colors are in use, it picks one at random.
 
 ## Usage
 
